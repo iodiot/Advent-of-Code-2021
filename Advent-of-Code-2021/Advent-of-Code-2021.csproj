@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <RootNamespace>Advent_of_Code_2021</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Day-1\Input.txt" />
+    <None Remove="Day-2\Input.txt" />
+    <None Remove="Day-3\Input.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Day-1\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day-2\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day-3\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
