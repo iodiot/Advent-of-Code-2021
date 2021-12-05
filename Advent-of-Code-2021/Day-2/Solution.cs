@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
-using System.Linq;
 
 namespace Advent_of_Code_2021.Day_2
 {
@@ -11,7 +8,7 @@ namespace Advent_of_Code_2021.Day_2
     /// </summary>
     public class Solution : ISolution
     {
-        struct Position
+        private struct Position
         {
             public int Hor;
             public int Depth;

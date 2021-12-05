@@ -6,22 +6,85 @@ using System.Linq;
 
 namespace Advent_of_Code_2021.Day_3
 {
+    /// <summary>
+    /// --- Day 3: Binary Diagnostic ---
+    /// </summary>
     public class Solution : ISolution
     {
         public void Run()
         {
+            RunFirstPart();
+            RunSecondPart();
+        }
+
+        private static void RunFirstPart()
+        {
             var lines = File.ReadAllLines(@"Day-3/Input.txt");
 
-            foreach (var line in lines)
+            var gammaRate = new StringBuilder();
+            var epsilonRate = new StringBuilder();
+
+            for (var x = 0; x < lines[0].Length; ++x)
             {
-                Console.WriteLine(line);
+                var sb = new StringBuilder();
+
+                for (var y = 0; y < lines.Length; ++y)
+                {
+                    sb.Append(lines[y][x]);
+                }
+
+                var mostCommonIsOne = sb.ToString().Count(ch => ch == '1') > sb.Length / 2;
+
+                gammaRate.Append(mostCommonIsOne ? '1' : '0');
+                epsilonRate.Append(mostCommonIsOne ? '0' : '1');
             }
 
-            Console.WriteLine();
+            var gammaRateInt = Convert.ToInt32(gammaRate.ToString(), 2);
+            var epsilonRateInt = Convert.ToInt32(epsilonRate.ToString(), 2);
 
-            Console.WriteLine($"First part: { -1 }");
-            Console.WriteLine($"Second part: { -1 }");
+            Console.WriteLine($"First part: { gammaRateInt * epsilonRateInt }");
+        }
 
+        private static void RunSecondPart()
+        {
+            var lines = File.ReadAllLines(@"Day-3/Input.txt").ToList();
+
+            Console.WriteLine($"Second part: { DetermineRating(lines.ToList(), true) * DetermineRating(lines.ToList(), false) }");
+        }
+
+        private static int DetermineRating(List<string> numbers, bool findOxygenGeneratorLevel = true)
+        {
+            var x = 0;
+
+            while (numbers.Count != 1)
+            {
+                var sb = new StringBuilder();
+
+                for (var y = 0; y < numbers.Count; ++y)
+                {
+                    sb.Append(numbers[y][x]);
+                }
+
+                char bit;
+
+                var ones = sb.ToString().Count(ch => ch == '1');
+                var zeros = sb.ToString().Count(ch => ch == '0');
+
+                if (findOxygenGeneratorLevel)
+                {
+                    bit = (ones >= zeros) ? '1' : '0';
+                }
+                else
+                {
+                    bit = (zeros <= ones) ? '0' : '1';
+                }
+
+                numbers = numbers.Where(line => line[x] == bit).ToList();
+
+                ++x;
+            }
+
+            return Convert.ToInt32(numbers[0], 2);
         }
     }
 }
