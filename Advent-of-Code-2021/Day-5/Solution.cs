@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Linq;
 
@@ -14,7 +13,7 @@ namespace Advent_of_Code_2021.Day_5
         private struct Vent
         {
             public int X1, Y1, X2, Y2;
-            public bool IsOrhto { get; private set; }
+            public bool IsOrtho { get; private set; }
 
             public Vent(string line)
             {
@@ -24,7 +23,7 @@ namespace Advent_of_Code_2021.Day_5
                 X2 = tokens[2];
                 Y2 = tokens[3];
 
-                IsOrhto = (X1 == X2) || (Y1 == Y2);
+                IsOrtho = (X1 == X2) || (Y1 == Y2);
             }
         }
 
@@ -42,7 +41,7 @@ namespace Advent_of_Code_2021.Day_5
 
             foreach (var vent in vents)
             {
-                if (!onlyOrtho || (onlyOrtho && vent.IsOrhto))
+                if (!onlyOrtho || (onlyOrtho && vent.IsOrtho))
                 {
                     BresenhamLine(vent.X1, vent.Y1, vent.X2, vent.Y2, grid);
                 }
@@ -83,7 +82,7 @@ namespace Advent_of_Code_2021.Day_5
             for (var x = x1; x <= x2; ++x)
             {
                 var coord = (steep ? y : x, steep ? x : y);
-                grid[coord] = grid.ContainsKey(coord) ? grid[coord] += 1 : 1; 
+                grid[coord] = grid.ContainsKey(coord) ? grid[coord] + 1 : 1; 
 
                 error -= dy;
                 if (error < 0)
