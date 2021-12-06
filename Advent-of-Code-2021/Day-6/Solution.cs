@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Advent_of_Code_2021.Day_6
 {
@@ -40,20 +39,14 @@ namespace Advent_of_Code_2021.Day_6
 
                 if (fishToAdd > 0)
                 {
-                    fishTotal += fishToAdd;
-
-                    var daysLeft = days - day - 1;
-
-                    fishTotal += CountFishHeirs(fishToAdd, daysLeft);
+                    fishTotal += (CountFishHeirs(days - day - 1, new Dictionary<long, long>()) + 1) * fishToAdd;
                 }
-
-                Console.WriteLine(day);
             }
 
             return fishTotal;
         }
 
-        private static long CountFishHeirs(long fishToAdd, long daysLeft)
+        private static long CountFishHeirs(long daysLeft, Dictionary<long, long> memory)
         {
             long total = 0;
 
@@ -61,13 +54,24 @@ namespace Advent_of_Code_2021.Day_6
 
             if (daysLeft >= 0)
             {
-                total += CountFishHeirs(fishToAdd, daysLeft) + fishToAdd;
+                if (!memory.ContainsKey(daysLeft))
+                {
+                    memory[daysLeft] = CountFishHeirs(daysLeft, memory);
+                }
+
+                total += memory[daysLeft] + 1;
             }
 
             while (daysLeft >= 7)
             {
                 daysLeft -= 7;
-                total += CountFishHeirs(fishToAdd, daysLeft) + fishToAdd;
+
+                if (!memory.ContainsKey(daysLeft))
+                {
+                    memory[daysLeft] = CountFishHeirs(daysLeft, memory);
+                }
+
+                total += memory[daysLeft] + 1;
             }
 
             return total;
