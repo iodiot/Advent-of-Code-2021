@@ -27,12 +27,11 @@ namespace Advent_of_Code_2021.Day_5
             }
         }
 
-        public void Run()
+        public (string PartOne, string PartTwo) Run()
         {
             var vents = File.ReadAllLines(@"Day-5/Input.txt").Select(line => new Vent(line)).ToList();
 
-            Console.WriteLine($"First part: { CountDangerousPoints(vents, onlyOrtho: true) }");
-            Console.WriteLine($"Second part: { CountDangerousPoints(vents, onlyOrtho: false) }");
+            return (CountDangerousPoints(vents, onlyOrtho: true).ToString(), CountDangerousPoints(vents, onlyOrtho: false).ToString());
         }
 
         private static int CountDangerousPoints(List<Vent> vents, bool onlyOrtho = true)

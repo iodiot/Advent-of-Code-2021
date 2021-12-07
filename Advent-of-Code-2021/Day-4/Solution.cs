@@ -88,7 +88,7 @@ namespace Advent_of_Code_2021.Day_4
             }
         }
 
-        public void Run()
+        public (string PartOne, string PartTwo) Run()
         {
             var lines = File.ReadAllLines(@"Day-4/Input.txt");
 
@@ -117,8 +117,7 @@ namespace Advent_of_Code_2021.Day_4
                 n += 6;
             }
 
-            Console.WriteLine($"First part: { PlayBingo(boards, numbers, letTheSquidWin: false) }");
-            Console.WriteLine($"Second part: { PlayBingo(boards, numbers, letTheSquidWin: true) }");
+            return (PlayBingo(boards, numbers, letTheSquidWin: false).ToString(), PlayBingo(boards, numbers, letTheSquidWin: true).ToString());
         }
 
         private static int PlayBingo(List<Board> boards, List<int> numbers, bool letTheSquidWin = false)

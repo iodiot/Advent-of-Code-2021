@@ -9,7 +9,7 @@ namespace Advent_of_Code_2021.Day_1
     /// </summary>
     public class Solution : ISolution
     {
-        public void Run()
+        public (string PartOne, string PartTwo) Run()
         {
             var numbers = File.ReadAllLines(@"Day-1/Input.txt").Select(line => Convert.ToInt32(line)).ToList();
 
@@ -20,7 +20,7 @@ namespace Advent_of_Code_2021.Day_1
                 counter += (numbers[i] > numbers[i - 1]) ? 1 : 0;
             }
 
-            Console.WriteLine($"First part: { counter }");
+            var firstPart = counter.ToString();
 
             counter = 0;
 
@@ -31,7 +31,7 @@ namespace Advent_of_Code_2021.Day_1
                 counter += (left > right) ? 1 : 0;
             }
 
-            Console.WriteLine($"Second part: { counter }");
+            return (firstPart, counter.ToString());
         }
     }
 }

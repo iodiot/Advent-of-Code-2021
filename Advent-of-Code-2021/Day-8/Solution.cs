@@ -8,20 +8,11 @@ namespace Advent_of_Code_2021.Day_8
 {
     public class Solution : ISolution
     {
-        public void Run()
+        public (string PartOne, string PartTwo) Run()
         {
             var lines = File.ReadAllLines(@"Day-8/Input.txt");
 
-            foreach (var line in lines)
-            {
-                Console.WriteLine(line);
-            }
-
-            Console.WriteLine();
-
-            Console.WriteLine($"First part: { -1 }");
-            Console.WriteLine($"Second part: { -1 }");
-
+            return ("", "");
         }
     }
 }

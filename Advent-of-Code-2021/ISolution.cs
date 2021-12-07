@@ -6,6 +6,6 @@ namespace Advent_of_Code_2021
 {
     interface ISolution
     {
-        void Run();
+        (string PartOne, string PartTwo) Run();
     }
 }

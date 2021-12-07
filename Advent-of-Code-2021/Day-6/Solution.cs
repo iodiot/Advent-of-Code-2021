@@ -10,12 +10,11 @@ namespace Advent_of_Code_2021.Day_6
     /// </summary>
     public class Solution : ISolution
     {
-        public void Run()
+        public (string PartOne, string PartTwo) Run()
         {
             var state = File.ReadAllText(@"Day-6/Input.txt").Split(',').Select(el => Convert.ToInt32(el)).ToArray();
 
-            Console.WriteLine($"First part: { CountFish(state.ToArray(), 80) }");
-            Console.WriteLine($"Second part: { CountFish(state.ToArray(), 256) }");
+            return (CountFish(state.ToArray(), 80).ToString(), CountFish(state.ToArray(), 256).ToString());
         }
 
         private static long CountFish(int[] state, int days)

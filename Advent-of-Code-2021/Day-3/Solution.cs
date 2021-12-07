@@ -11,13 +11,15 @@ namespace Advent_of_Code_2021.Day_3
     /// </summary>
     public class Solution : ISolution
     {
-        public void Run()
+        public (string PartOne, string PartTwo) Run()
         {
             RunFirstPart();
             RunSecondPart();
+
+            return (RunFirstPart().ToString(), RunSecondPart().ToString());
         }
 
-        private static void RunFirstPart()
+        private static int RunFirstPart()
         {
             var lines = File.ReadAllLines(@"Day-3/Input.txt");
 
@@ -42,14 +44,14 @@ namespace Advent_of_Code_2021.Day_3
             var gammaRateInt = Convert.ToInt32(gammaRate.ToString(), 2);
             var epsilonRateInt = Convert.ToInt32(epsilonRate.ToString(), 2);
 
-            Console.WriteLine($"First part: { gammaRateInt * epsilonRateInt }");
+            return gammaRateInt * epsilonRateInt;
         }
 
-        private static void RunSecondPart()
+        private static int RunSecondPart()
         {
             var lines = File.ReadAllLines(@"Day-3/Input.txt").ToList();
 
-            Console.WriteLine($"Second part: { DetermineRating(lines.ToList(), true) * DetermineRating(lines.ToList(), false) }");
+            return DetermineRating(lines.ToList(), true) * DetermineRating(lines.ToList(), false);
         }
 
         private static int DetermineRating(List<string> numbers, bool findOxygenGeneratorLevel = true)

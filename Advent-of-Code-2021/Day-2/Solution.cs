@@ -15,7 +15,7 @@ namespace Advent_of_Code_2021.Day_2
             public int Aim;
         }
 
-        public void Run()
+        public (string PartOne, string PartTwo) Run()
         {
             var lines = File.ReadAllLines(@"Day-2/Input.txt");
 
@@ -48,8 +48,7 @@ namespace Advent_of_Code_2021.Day_2
                 }
             }
 
-            Console.WriteLine($"First part: { pos1.Hor * pos1.Depth }");
-            Console.WriteLine($"Second part: { pos2.Hor * pos2.Depth }");
+            return ((pos1.Hor * pos1.Depth).ToString(), (pos2.Hor * pos2.Depth).ToString());
         }
     }
 }
