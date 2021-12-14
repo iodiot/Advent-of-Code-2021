@@ -14,8 +14,8 @@ namespace Advent_of_Code_2021.Day_10
         private static readonly string openBrackets   = "<{[(";
         private static readonly string closeBrackets  = ">}])";
 
-        private static Dictionary<char, int> scoreTableOne = new() { { ')', 3 }, { ']', 57 }, { '}', 1197 }, { '>', 25137 } };
-        private static Dictionary<char, int> scoreTableTwo = new() { { ')', 1 }, { ']', 2 }, { '}', 3 }, { '>', 4 } };
+        private static readonly Dictionary<char, int> scoreTableOne = new() { { ')', 3 }, { ']', 57 }, { '}', 1197 }, { '>', 25137 } };
+        private static readonly Dictionary<char, int> scoreTableTwo = new() { { ')', 1 }, { ']', 2 }, { '}', 3 }, { '>', 4 } };
 
         public (string PartOne, string PartTwo) Run()
         {
