@@ -13,119 +13,91 @@ namespace Advent_of_Code_2021.Day_11
     {
         private class Grid
         {
-            private readonly static int SIZE = 5;
+            public readonly int Size;
 
-            private int[,] grid;
+            private readonly int[,] grid;
 
             public Grid(List<string> lines)
             {
-                grid = new int[SIZE, SIZE];
+                Size = lines.Count;
 
-                for (var x = 0; x < SIZE; ++x)
+                grid = new int[Size, Size];
+
+                for (var x = 0; x < Size; ++x)
                 {
-                    for (var y = 0; y < SIZE; ++y)
+                    for (var y = 0; y < Size; ++y)
                     {
                         grid[x, y] = lines[y][x] - '0';
                     }
                 }
             }
 
-            public void Step()
+            public int Step()
             {
-                Print();
-
-                for (var x = 0; x < SIZE; ++x)
+                for (var x = 0; x < Size; ++x)
                 {
-                    for (var y = 0; y < SIZE; ++y)
+                    for (var y = 0; y < Size; ++y)
                     {
                         grid[x, y] += 1;
                     }
                 }
 
-                var willFlash = new List<(int X, int Y)>();
-                var didFlashed = new List<(int X, int Y)>();
+                var flashed = new bool[Size, Size];
 
-                while (true)
+                for (var x = 0; x < Size; ++x)
                 {
-                    for (var x = 0; x < SIZE; ++x)
+                    for (var y = 0; y < Size; ++y)
                     {
-                        for (var y = 0; y < SIZE; ++y)
+                        if (grid[x, y] > 9)
                         {
-                            if (grid[x, y] >= 9)
-                            {
-                                willFlash.Add((x, y));
-                            }
+                            Flash(x, y, flashed);
                         }
                     }
-
-                    if (willFlash.Count == 0)
-                    {
-                        break;
-                    }
-
-                    var atLeastOneFlashed = false;
-
-                    foreach (var (X, Y) in willFlash)
-                    {
-                        if (!didFlashed.Contains((X, Y)))
-                        {
-                            Flash(X, Y);
-                            didFlashed.Add((X, Y));
-                            atLeastOneFlashed = true;
-                        }
-                    }
-
-                    if (atLeastOneFlashed)
-                    {
-                        break;
-                    }
-
-                    willFlash.Clear();
                 }
 
-                for (var x = 0; x < SIZE; ++x)
+                var flashes = 0;
+
+                for (var x = 0; x < Size; ++x)
                 {
-                    for (var y = 0; y < SIZE; ++y)
+                    for (var y = 0; y < Size; ++y)
                     {
-                        if (grid[x, y] >= 9)
+                        if (flashed[x, y])
                         {
                             grid[x, y] = 0;
+                            flashes += 1;
                         }
                     }
                 }
+
+                return flashes;
             }
 
-            private void Flash(int x, int y)
+            private void Flash(int x, int y, bool[,] flashed)
             {
+                if (flashed[x, y])
+                {
+                    return;
+                }
+
+                flashed[x, y] = true;
+
                 var steps = new List<(int X, int Y)> { (-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1) };
 
                 foreach (var (X, Y) in steps)
                 {
-                    var xx = x + X;
-                    var yy = y + Y;
+                    var dx = x + X;
+                    var dy = y + Y;
 
-                    if (xx >= 0 && xx < SIZE && yy >= 0 && yy < SIZE)
+                    if (dx >= 0 && dx < Size && dy >= 0 && dy < Size)
                     {
-                        grid[x, y] += 1;
+                        grid[dx, dy] += 1;
+
+                        if (grid[dx, dy] > 9)
+                        {
+                            Flash(dx, dy, flashed);
+                        }
                     }
                 }
-            }
-
-            public void Print()
-            {
-                for (var y = 0; y < SIZE; ++y)
-                {
-                    var sb = new StringBuilder();
-
-                    for (var x = 0; x < SIZE; ++x)
-                    {
-                        sb.Append(grid[x, y]); 
-                    }
-
-                    Console.WriteLine(sb.ToString());
-                }
-
-                Console.WriteLine();
             }
         }
 
@@ -135,11 +107,30 @@ namespace Advent_of_Code_2021.Day_11
 
             var grid = new Grid(lines);
 
-            grid.Step();
+            var totalFlashesAfter100Steps = 0;
+            var firstStepWhenAllFlash = -1;
 
-            grid.Print();
+            var step = 0;
 
-            return ("", "");
+            while (true)
+            {
+                var flashes = grid.Step();
+
+                if (step < 100)
+                {
+                    totalFlashesAfter100Steps += flashes;
+                }
+
+                if (flashes == grid.Size * grid.Size)
+                {
+                    firstStepWhenAllFlash = step + 1;
+                    break;
+                }
+
+                step += 1;
+            }
+
+            return (totalFlashesAfter100Steps.ToString(), firstStepWhenAllFlash.ToString());
         }
     }
 }
