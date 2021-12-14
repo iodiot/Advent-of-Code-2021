@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Advent_of_Code_2021.Day_12
 {
+    /// <summary>
+    /// --- Day 12: Passage Pathing ---
+    /// </summary>
     public class Solution : ISolution
     {
         public (string PartOne, string PartTwo) Run()
@@ -14,5 +17,7 @@ namespace Advent_of_Code_2021.Day_12
 
             return ("", "");
         }
+
+        private int CountPathes(List<string> starts, List<string> ends, )
     }
 }
