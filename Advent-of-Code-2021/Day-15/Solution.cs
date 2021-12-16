@@ -8,6 +8,34 @@ namespace Advent_of_Code_2021.Day_15
 {
     public class Solution : ISolution
     {
+        public class Position
+        {
+            public int X;
+            public int Y;
+
+            public Position(int x, int y)
+            {
+                X = x;
+                Y = y;
+            }
+        }
+
+        public class PositionData
+        {
+            public Position Position;
+            public Position PrevPosition;
+            public bool IsUnvisited;
+            public int WeightSum;
+
+            public PositionData(Position position)
+            {
+                Position = position;
+                IsUnvisited = true;
+                WeightSum = int.MaxValue;
+                PrevPosition = null;
+            }
+        }
+
         public (string PartOne, string PartTwo) Run()
         {
             var lines = File.ReadAllLines(@"Day-15/Input.txt");
@@ -26,83 +54,26 @@ namespace Advent_of_Code_2021.Day_15
 
             var times = 5;
 
-            var stretchedCave = StretchCave(cave, size, times);
-
             return (
-                ComputeRiskLevel(size - 1, size - 1, cave, new Dictionary<(int, int), int>()).ToString(),
-                ComputeRiskLevel(size * times - 1, size * times - 1, stretchedCave, new Dictionary<(int, int), int>()).ToString()
+                ComputeRiskLevel(cave, size).ToString(),
+                  ""
                 );
 
             // 2837 -- high
         }
 
-        private static int[,] StretchCave(int[,] cave, int size, int times)
+        private static int ComputeRiskLevel(int[,] cave, int size)
         {
-            var newCave = new int[size * times, size * times];
+            var r = FindShortesPath(new Position(0, 0), new Position(size - 1, size - 1));
 
-            for (var gx = 0; gx < times; ++gx)
-            {
-                for (var gy = 0; gy < times; ++gy)
-                {
-                    var moreRisk = gx + gy;
-
-                    for (var x = 0; x < size; ++x)
-                    {
-                        for (var y = 0; y < size; ++y)
-                        {
-                            var risk = cave[x, y] + moreRisk;
-
-                            while (risk > 9)
-                            {
-                                risk -= 9;
-                            }
-
-                            newCave[gx * size + x, gy * size + y] = risk;
-                        }
-                    }
-                }
-            }
-
-            //for (var y = 0; y < size * times; ++y)
-            //{
-            //    var sb = new StringBuilder();
-            //    for (var x = 0; x < size * times; ++x)
-            //    {
-            //        sb.Append(newCave[x, y]);
-            //    }
-            //    Console.WriteLine(sb.ToString());
-            //}
-
-            return newCave;
+            return 0;
         }
 
-        private int ComputeRiskLevel(int x, int y, int[,] cave, Dictionary<(int X, int Y), int> dp)
+        private static int FindShortesPath(Position start, Position end)
         {
-            if (x == 0 && y == 0)
-            {
-                return 0;
-            }
+            var datas = new Dictionary<Position, PositionData>();
 
-            if (dp.ContainsKey((x, y)))
-            {
-                return dp[(x, y)];
-            }
-
-            var options = new List<(int X, int Y)> { (x - 1, y), (x, y - 1) };
-
-            var minRiskLevel = Int32.MaxValue;
-
-            foreach (var (X, Y) in options)
-            {
-                if (X >= 0 && Y >= 0)
-                {
-                    minRiskLevel = Math.Min(minRiskLevel, ComputeRiskLevel(X, Y, cave, dp));
-                }
-            }
-
-            dp[(x, y)] = cave[x, y] + minRiskLevel;
-
-            return dp[(x, y)];
+            return 0;
         }
     }
 }
