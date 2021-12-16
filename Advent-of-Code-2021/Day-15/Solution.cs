@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace Advent_of_Code_2021.Day_15
 {
-    public class DijkstraCave
-	{
-        private class Position
+    public class Solution : ISolution
+    {
+        private struct Position
         {
             public int X;
             public int Y;
@@ -18,104 +18,25 @@ namespace Advent_of_Code_2021.Day_15
                 X = x;
                 Y = y;
             }
-        }
 
-        private class PositionData
-        {
-            public Position Position;
-            public Position PrevPosition;
-            public bool IsUnvisited;
-            public int WeightSum;
-
-            public PositionData(Position position)
+            public bool InRectangle(int side)
             {
-                Position = position;
-                IsUnvisited = true;
-                WeightSum = int.MaxValue;
-                PrevPosition = null;
+                return X >= 0 && X < side && Y >= 0 && Y < side;
             }
         }
 
-        private readonly int[,] cave;
-        private readonly int size;
-        private readonly Dictionary<Position, PositionData> positionDatas;
-
-        public DijkstraCave(int[,] cave, int size)
-		{
-            this.cave = cave;
-            this.size = size;
-
-            positionDatas = new Dictionary<Position, PositionData>();
-		}
-
-        private int ComputeRiskLevel()
+        private class Node
         {
-            var r = FindShortesPath(new Position(0, 0), new Position(size - 1, size - 1));
+            public int Weight = -1;
+            public Node PrevNode = null;
 
-            return 0;
-        }
-
-        private int FindShortesPath(Position start, Position end)
-        {
-            positionDatas[start] = new PositionData(start);
-
-            var first = positionDatas[start];
-
-            first.WeightSum = 0;
-
-            while (true)
+            public Node(int weight, Node prevNode)
             {
-                var current = FindUnvisitedVertexWithMinSum();
-
-                if (current == null)
-                {
-                    break;
-                }
-
-                // SetSumToNextVertex(current);
-            }
-
-
-            return 0;
-        }
-
-        private static PositionData FindUnvisitedVertexWithMinSum()
-        {
-            var minValue = Int32.MaxValue;
-
-            PositionData minPositionData = null;
-
-            foreach (var i in infos)
-            {
-                if (i.IsUnvisited && i.EdgesWeightSum < minValue)
-                {
-                    minPositionData = i;
-                    minValue = i.EdgesWeightSum;
-                }
-            }
-
-            return minPositionData;
-        }
-
-        private static void SetSumToNextVertex(PositionData data)
-        {
-            data.IsUnvisited = false;
-
-            foreach (var e in info.Vertex.Edges)
-            {
-                var nextInfo = GetVertexInfo(e.ConnectedVertex);
-                var sum = info.EdgesWeightSum + e.EdgeWeight;
-                if (sum < nextInfo.EdgesWeightSum)
-                {
-                    nextInfo.EdgesWeightSum = sum;
-                    nextInfo.PreviousVertex = info.Vertex;
-                }
+                Weight = weight;
+                PrevNode = prevNode;
             }
         }
-    }
 
-    public class Solution : ISolution
-    {
         public (string PartOne, string PartTwo) Run()
         {
             var lines = File.ReadAllLines(@"Day-15/Input.txt");
@@ -132,17 +53,78 @@ namespace Advent_of_Code_2021.Day_15
                 }
             }
 
-            var times = 5;
-
             return (
-                "",
-                  ""
+                CountRiskLevel(cave, size, stretchFactor: 1).ToString(),
+                CountRiskLevel(cave, size, stretchFactor: 5).ToString()
                 );
 
             // 2837 -- high
         }
 
-        
+        private static int CountRiskLevel(int[,] cave, int size, int stretchFactor = 1)
+        {
+            var steps = new List<Position> { new Position(-1, 0), new Position(+1, 0), new Position(0, -1), new Position(0, +1) };
+
+            var nodes = new Dictionary<Position, Node>();
+
+            var queue = new Queue<Position>();
+
+            var startPosition = new Position(size * stretchFactor - 1, size * stretchFactor - 1);
+            var endPosition = new Position(0, 0);
+
+            queue.Enqueue(startPosition);
+            nodes[startPosition] = new Node(0, null);
+
+            while (queue.Count > 0)
+            {
+                var position = queue.Dequeue();
+                var node = nodes[position];
+
+                if (position.X == endPosition.X && position.Y == endPosition.Y)
+                {
+                    break;
+                }
+
+                foreach (var step in steps)
+                {
+                    var nextPosition = new Position(position.X + step.X, position.Y + step.Y);
+
+                    if (!nextPosition.InRectangle(size * stretchFactor))
+                    {
+                        continue;
+                    }
+
+                    var thisRisk = cave[nextPosition.X % size, nextPosition.Y % size];
+
+                    // We are in stretched cave
+                    if (!nextPosition.InRectangle(size))
+                    {
+                        var moreRisk = nextPosition.X / size + nextPosition.Y / size;
+
+                        thisRisk += moreRisk;
+
+                        while (thisRisk > 9)
+                        {
+                            thisRisk -= 9;
+                        }
+                    }
+
+                    var nextWeight = node.Weight + thisRisk;
+
+                    if (!nodes.ContainsKey(nextPosition))
+                    {
+                        nodes[nextPosition] = new Node(nextWeight, node);
+                        queue.Enqueue(nextPosition);
+                    }
+                    else if (nodes[nextPosition].Weight > nextWeight)
+                    {
+                        nodes[nextPosition] = new Node(nextWeight, node);
+                    }
+                }
+            }
+
+            return nodes[endPosition].Weight;
+        }
       
     }
 }
