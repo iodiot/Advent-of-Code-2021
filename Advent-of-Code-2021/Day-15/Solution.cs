@@ -6,9 +6,9 @@ using System.Linq;
 
 namespace Advent_of_Code_2021.Day_15
 {
-    public class Solution : ISolution
-    {
-        public class Position
+    public class DijkstraCave
+	{
+        private class Position
         {
             public int X;
             public int Y;
@@ -20,7 +20,7 @@ namespace Advent_of_Code_2021.Day_15
             }
         }
 
-        public class PositionData
+        private class PositionData
         {
             public Position Position;
             public Position PrevPosition;
@@ -36,6 +36,86 @@ namespace Advent_of_Code_2021.Day_15
             }
         }
 
+        private readonly int[,] cave;
+        private readonly int size;
+        private readonly Dictionary<Position, PositionData> positionDatas;
+
+        public DijkstraCave(int[,] cave, int size)
+		{
+            this.cave = cave;
+            this.size = size;
+
+            positionDatas = new Dictionary<Position, PositionData>();
+		}
+
+        private int ComputeRiskLevel()
+        {
+            var r = FindShortesPath(new Position(0, 0), new Position(size - 1, size - 1));
+
+            return 0;
+        }
+
+        private int FindShortesPath(Position start, Position end)
+        {
+            positionDatas[start] = new PositionData(start);
+
+            var first = positionDatas[start];
+
+            first.WeightSum = 0;
+
+            while (true)
+            {
+                var current = FindUnvisitedVertexWithMinSum();
+
+                if (current == null)
+                {
+                    break;
+                }
+
+                // SetSumToNextVertex(current);
+            }
+
+
+            return 0;
+        }
+
+        private static PositionData FindUnvisitedVertexWithMinSum()
+        {
+            var minValue = Int32.MaxValue;
+
+            PositionData minPositionData = null;
+
+            foreach (var i in infos)
+            {
+                if (i.IsUnvisited && i.EdgesWeightSum < minValue)
+                {
+                    minPositionData = i;
+                    minValue = i.EdgesWeightSum;
+                }
+            }
+
+            return minPositionData;
+        }
+
+        private static void SetSumToNextVertex(PositionData data)
+        {
+            data.IsUnvisited = false;
+
+            foreach (var e in info.Vertex.Edges)
+            {
+                var nextInfo = GetVertexInfo(e.ConnectedVertex);
+                var sum = info.EdgesWeightSum + e.EdgeWeight;
+                if (sum < nextInfo.EdgesWeightSum)
+                {
+                    nextInfo.EdgesWeightSum = sum;
+                    nextInfo.PreviousVertex = info.Vertex;
+                }
+            }
+        }
+    }
+
+    public class Solution : ISolution
+    {
         public (string PartOne, string PartTwo) Run()
         {
             var lines = File.ReadAllLines(@"Day-15/Input.txt");
@@ -55,25 +135,14 @@ namespace Advent_of_Code_2021.Day_15
             var times = 5;
 
             return (
-                ComputeRiskLevel(cave, size).ToString(),
+                "",
                   ""
                 );
 
             // 2837 -- high
         }
 
-        private static int ComputeRiskLevel(int[,] cave, int size)
-        {
-            var r = FindShortesPath(new Position(0, 0), new Position(size - 1, size - 1));
-
-            return 0;
-        }
-
-        private static int FindShortesPath(Position start, Position end)
-        {
-            var datas = new Dictionary<Position, PositionData>();
-
-            return 0;
-        }
+        
+      
     }
 }
