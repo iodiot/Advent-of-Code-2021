@@ -9,6 +9,10 @@ namespace Advent_of_Code_2021.Day_17
 {
     /// <summary>
     /// --- Day 17: Trick Shot ---
+    /// Second part is pure bruteforce.
+    /// Tried different approaches. 
+    /// Actualy the task is to find when sequence vx + (vx + 1) ... + (vx + n) is within area under some n.
+    /// I didn't find the closed formula.
     /// </summary>
     public class Solution : ISolution
     {
@@ -30,8 +34,7 @@ namespace Advent_of_Code_2021.Day_17
 
             var area = new Area() {MinX = numbers[0], MaxX = numbers[1], MinY = numbers[2], MaxY = numbers[3]};
 
-            // 2145 -- low
-            return (CalculateMaxY(area).ToString(), "");
+            return (CalculateMaxY(area).ToString(), CalculateOnTargetLaunches(area).ToString());
         }
 
         private static int CalculateMaxY(Area area)
@@ -39,55 +42,33 @@ namespace Advent_of_Code_2021.Day_17
             return (Math.Abs(area.MinY) - 1) * (Math.Abs(area.MinY)) / 2;
         }
 
-        private static int _CalculateMaxY(Area area)
+        private static int CalculateOnTargetLaunches(Area area)
         {
-            var maxY = 0;
+            var count = 0;
 
-            var bottom = 72;
-            var top = 132;
-
-            for (var startVel = 1; startVel < top; ++startVel)
+            for (var vx = 0; vx <= area.MaxX; ++vx)
             {
-                for (int vel = startVel, y = 0; ; ++vel)
+                for (var vy = -500; vy < 500; ++vy)
                 {
-                    y += vel;
-
-                    if (y < top)
-                    {
-                        if (y >= bottom)
-                        {
-                            maxY = startVel * (startVel + 1) / 2;
-                            Console.WriteLine($"vy={ startVel } max={ maxY } y={ y }");
-                            break;
-                        }
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    count += ModelProbe(vx, vy, area) == true ? 1 : 0;
                 }
             }
 
-            return maxY;
+            return count;
         }
 
-        private static (bool PassedArea, int MaxY) ModelProbe(int vx, int vy, Area area)
+        private static bool ModelProbe(int vx, int vy, Area area)
         {
-            var ovx = vx;
-            var ovy = vy;
-
             var x = 0;
             var y = 0;
 
             var maxY = y;
 
-            var passedArea = false;
-
             while (true)
             {
                 if (area.ContainsPoint(x, y))
                 {
-                    passedArea = true;
+                    return true;
                 }
 
                 x += vx;
@@ -103,9 +84,7 @@ namespace Advent_of_Code_2021.Day_17
                 }
             }
 
-            Console.WriteLine($"{ ovx } { ovy } { passedArea } { maxY }");
-
-            return (passedArea, maxY);
+            return false;
         }
     }
 }
