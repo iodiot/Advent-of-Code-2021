@@ -91,7 +91,6 @@ namespace Advent_of_Code_2021.Day_8
                     }
                 }
 
-                int x = 0;
             }
 
             return 0;
