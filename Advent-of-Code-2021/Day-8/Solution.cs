@@ -15,7 +15,10 @@ namespace Advent_of_Code_2021.Day_8
         {
             var lines = File.ReadAllLines(@"Day-8/Input.txt");
 
-            return (RunFirstPart(lines.ToList()).ToString(), "");
+            return (
+                RunFirstPart(lines.ToList()).ToString(), 
+                RunSecondPart(lines.ToList()).ToString()
+                );
         }
 
         private static int RunFirstPart(List<string> lines)
@@ -46,11 +49,16 @@ namespace Advent_of_Code_2021.Day_8
 
         private static int RunSecondPart(List<string> lines)
         {
-            var mapping = new Dictionary<string, int>();
+            var mapping = new Dictionary<int, List<string>>();
+
+            for (var i = 0; i < 10; ++i)
+            {
+                mapping[i] = new List<string>();
+            }
 
             foreach (var line in lines)
             {
-                var words = line.Split(" | ")[1].Split(' ').ToList();
+                var words = line.Split(" | ")[0].Split(' ').ToList();
 
                 foreach (var word in words)
                 {
@@ -59,19 +67,31 @@ namespace Advent_of_Code_2021.Day_8
                     switch (word.Length)
                     {
                         case 2:
-                            mapping[sorted] = 1;
+                            mapping[1].Add(sorted);
                             break;
                         case 3:
-                            mapping[sorted] = 7;
+                            mapping[7].Add(sorted);
                             break;
                         case 4:
-                            mapping[sorted] = 4;
+                            mapping[4].Add(sorted);
+                            break;
+                        case 5:
+                            mapping[2].Add(sorted);
+                            mapping[3].Add(sorted);
+                            mapping[5].Add(sorted);
+                            break;
+                        case 6:
+                            mapping[0].Add(sorted);
+                            mapping[6].Add(sorted);
+                            mapping[9].Add(sorted);
                             break;
                         case 7:
-                            mapping[sorted] = 8;
+                            mapping[8].Add(sorted);
                             break;
                     }
                 }
+
+                int x = 0;
             }
 
             return 0;

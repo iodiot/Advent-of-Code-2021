@@ -6,6 +6,16 @@ using System.Linq;
 
 namespace Advent_of_Code_2021.Day_15
 {
+    /// <summary>
+    /// --- Day 15: Chiton ---
+    /// This fucking day took too much time.
+    /// Original solution that used DP was wrong since the task was needed to be solved upside down.
+    /// Than I implemented some kind of wave algorithm. 
+    /// But the answer for the second part was the same and wrong.
+    /// All I needed was to propagate the wave from the end and not from the start.
+    /// Also I tried to implenet Deykstra algorithm for the first time, but it's better to try it under more basic conditions.
+    /// Now the wave algoritm does its job but it's too slow. 
+    /// </summary>
     public class Solution : ISolution
     {
         private struct Position
@@ -57,8 +67,6 @@ namespace Advent_of_Code_2021.Day_15
                 CountRiskLevel(cave, size, stretchFactor: 1).ToString(),
                 CountRiskLevel(cave, size, stretchFactor: 5).ToString()
                 );
-
-            // 2837 -- high
         }
 
         private static int CountRiskLevel(int[,] cave, int size, int stretchFactor = 1)

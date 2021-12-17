@@ -14,6 +14,7 @@
     <None Remove="Day-14\Input.txt" />
     <None Remove="Day-15\Input.txt" />
     <None Remove="Day-16\Input.txt" />
+    <None Remove="Day-17\Input.txt" />
     <None Remove="Day-1\Input.txt" />
     <None Remove="Day-2\Input.txt" />
     <None Remove="Day-3\Input.txt" />
@@ -45,6 +46,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Day-16\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day-17\Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="Day-1\Input.txt">
