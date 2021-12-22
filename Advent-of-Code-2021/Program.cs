@@ -6,7 +6,7 @@ namespace Advent_of_Code_2021
     {
         static void Main(string[] args)
         {
-            var solution = new Day_17.Solution();
+            var solution = new Day_18.Solution();
 
             var (PartOne, PartTwo) = solution.Run();
 
