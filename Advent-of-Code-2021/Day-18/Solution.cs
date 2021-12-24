@@ -7,157 +7,6 @@ using System.Text.RegularExpressions;
 
 namespace Advent_of_Code_2021.Day_18
 {
-    public class Node
-    {
-        public Node Left;
-        public Node Right;
-        public int Value;
-        public bool IsLeaf;
-        public bool IsRegularPair => !IsLeaf && Left.IsLeaf && Right.IsLeaf;
-
-        public Node FirstLeftLeaf;
-        public Node FirstRightLeaf;
-
-        public Node(Node left, Node right)
-        {
-            Left = left;
-            Right = right;
-        }
-
-        public Node(int value)
-        {
-            Value = value;
-            IsLeaf = true;
-        }
-    }
-
-
-    public static class PairBuilder
-    {
-        private static int GetPrecedence(string token)
-        {
-            return token == "," ? 1 : -1;
-        }
-
-        private static List<string> InfixToPostfix(List<string> tokens)
-        {
-            var result = new List<string>();
-
-            var stack = new Stack<string>();
-
-            foreach (var token in tokens)
-            {
-                if (Char.IsDigit(token[0]))
-                {
-                    result.Add(token);
-                }
-                else if (token[0] == '[')
-                {
-                    stack.Push(token);
-                }
-                else if (token[0] == ']')
-                {
-                    while (stack.Count > 0 && stack.Peek() != "[")
-                    {
-                        result.Add(stack.Pop());
-                    }
-
-                    if (stack.Count > 0 && stack.Peek() != "[")
-                    {
-                        return null;
-                    }
-                    else
-                    {
-                        stack.Pop();
-                    }
-                }
-                else
-                {
-                    while (stack.Count > 0 && GetPrecedence(token) <= GetPrecedence(stack.Peek()))
-                    {
-                        result.Add(stack.Pop());
-                    }
-
-                    stack.Push(token);
-                }
-            }
-
-            while (stack.Count > 0)
-            {
-                result.Add(stack.Pop());
-            }
-
-            return result;
-        }
-
-        public static Node BuildTree(List<string> tokens)
-        {
-            var postfix = InfixToPostfix(tokens);
-
-            var sb = new StringBuilder();
-            foreach (var token in postfix)
-            {
-                sb.Append(token);
-            }
-
-            Console.WriteLine(sb.ToString());
-
-            var stack = new Stack<Node>();
-
-            var leafs = new Dictionary<int, Node>();
-            var leafIndexes = new List<int>();
-
-
-            for (var i = 0; i < postfix.Count; ++i)
-            {
-                if (char.IsDigit(postfix[i][0]))
-                {
-                    leafs[i] = new Node(Convert.ToInt32(postfix[i]));
-                    leafIndexes.Add(i);
-                }
-            }
-
-            var lastLeafIndex = -1;
-
-            for (var i = 0; i < postfix.Count; ++i)
-            {
-                var token = postfix[i];
-
-                if (char.IsDigit(token[0]))
-                {
-                    stack.Push(leafs[i]);
-                    lastLeafIndex = i;
-                }
-                else
-                {
-                    var right = stack.Pop();
-                    var left = stack.Pop();
-
-                    var node = new Node(left, right);
-
-                    var n = leafIndexes.IndexOf(lastLeafIndex);
-
-                    if (n != -1)
-                    {
-                        if (n - 1 >= 0)
-                        {
-                            node.FirstLeftLeaf = leafs[leafIndexes[n - 1]];
-                        }
-
-                        if (n + 1 < leafIndexes.Count)
-                        {
-                            node.FirstRightLeaf = leafs[leafIndexes[n + 1]];
-                        }
-                    }
-
-                    stack.Push(node);
-                }
-            }
-
-            return stack.Pop();
-        }
-    }
-
     /// <summary>
     /// --- Day 18: Snailfish ---
     /// </summary>
@@ -167,85 +16,209 @@ namespace Advent_of_Code_2021.Day_18
         {
             var lines = File.ReadAllLines(@"Day-18/Input.txt");
 
-            foreach (var line in lines)
-            {
-                var tokens = Regex.Matches(line, "([0-9]+)|\\[|\\]|,").Select(match => match.ToString()).ToList();
+            var numbers = lines.Select(line => new SnailfishNumber(Regex.Matches(line, "([0-9]+)|\\[|\\]|,").Select(match => match.ToString()).ToList())).ToList();
 
-                var tree = PairBuilder.BuildTree(tokens);
-                 PrintTree(tree);
-                exploded = false;
-                Reduce(tree, 0);
-                PrintTree(tree);
-
-            }
-
-            return ("", "");
+            return (RunFirstPart(numbers).ToString(), RunSecondPart(numbers).ToString());
         }
 
-        public static void PrintTree(Node tree, int depth = 0)
+        private static int RunFirstPart(List<SnailfishNumber> numbers)
         {
-            if (tree.IsLeaf)
-            {
-                Console.Write(tree.Value);
-                return;
-            }
-            
-            Console.Write("[");
-            PrintTree(tree.Left, depth + 1);
-            Console.Write(",");
-            PrintTree(tree.Right, depth + 1);
-            Console.Write("]");
+            var number = numbers[0].MakeCopy();
 
-            if (depth == 0)
+            foreach (var other in numbers.Skip(1))
             {
-                Console.WriteLine();
+                number.Add(other).Reduce(); ;
             }
+
+            return number.CalcMagnitude();
         }
 
-        bool exploded;
-
-        public Node Reduce(Node node, int depth)
+        private static int RunSecondPart(List<SnailfishNumber> numbers)
         {
-            if (node.IsLeaf)
+            var maxMagnitude = -1;
+
+            for (var i = 0; i < numbers.Count; ++i)
             {
-                return node;
-            }
-
-            if (depth == 3 && !exploded)
-            {
-                if (node.Left.IsRegularPair && node.Right.IsLeaf)
+                for (var j = 0; j < numbers.Count; ++j)
                 {
-                    exploded = true;
-
-                    if (node.FirstLeftLeaf != null)
+                    if (i != j)
                     {
-                        node.FirstLeftLeaf.Value += node.Left.Left.Value;
+                        maxMagnitude = Math.Max(numbers[i].MakeCopy().Add(numbers[j]).Reduce().CalcMagnitude(), maxMagnitude);
                     }
-
-                    return new Node(new Node(0), new Node(node.Left.Right.Value + node.Right.Value));
-                }
-                else if (node.Left.IsLeaf && node.Right.IsRegularPair)
-                {
-                    exploded = true;
-
-                    if (node.FirstRightLeaf != null)
-                    {
-                        node.FirstRightLeaf.Value += node.Right.Right.Value;
-                    }
-
-                    return new Node(new Node(node.Left.Value + node.Right.Left.Value), new Node(0));
                 }
             }
 
-            if (depth >= 3)
+            return maxMagnitude;
+        }
+    }
+
+    public class SnailfishNumber
+    {
+        public List<string> Tokens => tokens.ToList();
+
+        private List<string> tokens;
+
+        public SnailfishNumber(List<string> tokens)
+        {
+            this.tokens = tokens;
+        }
+
+        public SnailfishNumber MakeCopy()
+        {
+            return new SnailfishNumber(Tokens);
+        }
+
+        public SnailfishNumber Reduce()
+        {
+            while (true)
             {
-                return node;
+                if (TryExplode())
+                {
+                    continue;
+                }
+
+                if (TrySplit())
+                {
+                    continue;
+                }
+
+                break;
             }
 
-            node.Left = Reduce(node.Left, depth + 1);
-            node.Right = Reduce(node.Right, depth + 1);
+            return this;
+        }
 
-            return node;
+        public SnailfishNumber Add(SnailfishNumber other)
+        {
+            var newTokens = new List<string>();
+
+            newTokens.Add("[");
+            newTokens.AddRange(tokens);
+            newTokens.Add(",");
+            newTokens.AddRange(other.Tokens);
+            newTokens.Add("]");
+
+            tokens = newTokens;
+
+            return this;
+        }
+
+        public int CalcMagnitude()
+        {
+            return CalcMagnitudeRecursive(tokens, 1).Magnitude;
+        }
+
+        private static (int Magnitude, int End) CalcMagnitudeRecursive(List<string> tokens, int start)
+        {
+            var sum = 0;
+
+            for (var i = 0; i < 2; ++i)
+            {
+                var factor = i == 0 ? 3 : 2;
+
+                if (tokens[start][0] == '[')
+                {
+                    var (magnitude, end) = CalcMagnitudeRecursive(tokens, start + 1);
+
+                    sum += factor * magnitude;
+                    start = end;
+                }
+                else
+                {
+                    sum += factor * Convert.ToInt32(tokens[start]);
+                    start += 1;
+                }
+
+                start += 1; 
+            }
+
+            return (sum, start);
+        }
+
+        private bool TryExplode()
+        {
+            var depth = 0;
+            var pos = -1;
+
+            for (var i = 0; i < tokens.Count; ++i)
+            {
+                var token = tokens[i];
+                var ch = tokens[i][0];
+
+                if (ch == '[')
+                {
+                    depth += 1;
+                }
+                else if (ch == ']')
+                {
+                    depth -= 1;
+                }
+                else
+                {
+                    if (depth == 5 && char.IsDigit(tokens[i][0]) && char.IsDigit(tokens[i + 2][0]))
+                    {
+                        pos = i;
+                        break;
+                    }
+                }
+            }
+
+            if (pos != -1)
+            {
+                AddToNearbyInt(pos - 1, Convert.ToInt32(tokens[pos]), -1);
+                AddToNearbyInt(pos + 3, Convert.ToInt32(tokens[pos + 2]), +1);
+
+                var newTokens = new List<string>();
+                newTokens.AddRange(tokens.Take(pos - 1));
+                newTokens.Add("0");
+                newTokens.AddRange(tokens.Skip(pos + 4));
+                tokens = newTokens;
+            }
+
+            return pos != -1;
+        }
+
+        private bool TrySplit()
+        {
+            var pos = -1;
+
+            for (var i = 0; i < tokens.Count; ++i)
+            {
+                if (char.IsDigit(tokens[i][0]) && Convert.ToInt32(tokens[i]) >= 10)
+                {
+                    pos = i;
+                    break;
+                }
+            }
+
+            if (pos != -1)
+            {
+                var n = Convert.ToInt32(tokens[pos]);
+                var floor = (int)Math.Floor((double)n / 2);
+                var ceiling = (int)Math.Ceiling((double)n / 2);
+
+                var newTokens = new List<string>();
+                newTokens.AddRange(tokens.Take(pos));
+                newTokens.AddRange(new List<string> { "[", floor.ToString(), ",", ceiling.ToString(), "]" });
+                newTokens.AddRange(tokens.Skip(pos + 1));
+                tokens = newTokens;
+            }
+
+            return pos != -1;
+        }
+
+        private void AddToNearbyInt(int pos, int toAdd, int step)
+        {
+            while (pos >= 0 && pos < tokens.Count)
+            {
+                if (char.IsDigit(tokens[pos][0]))
+                {
+                    tokens[pos] = (Convert.ToInt32(tokens[pos]) + toAdd).ToString();
+                    return;
+                }
+
+                pos += step;
+            }
         }
     }
 }
