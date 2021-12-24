@@ -20,6 +20,10 @@
     <None Remove="Day-1\Input.txt" />
     <None Remove="Day-20\Input.txt" />
     <None Remove="Day-21\Input.txt" />
+    <None Remove="Day-22\Input.txt" />
+    <None Remove="Day-23\Input.txt" />
+    <None Remove="Day-24\Input.txt" />
+    <None Remove="Day-25\Input.txt" />
     <None Remove="Day-2\Input.txt" />
     <None Remove="Day-3\Input.txt" />
     <None Remove="Day-4\Input.txt" />
@@ -70,6 +74,18 @@
     <Content Include="Day-21\Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Day-22\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day-23\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day-24\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Day-25\Input.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="Day-2\Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -94,6 +110,10 @@
     <Content Include="Day-9\Input.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.13.1" />
   </ItemGroup>
 
 </Project>
