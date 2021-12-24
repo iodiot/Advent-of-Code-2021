@@ -6,7 +6,7 @@ namespace Advent_of_Code_2021
     {
         static void Main(string[] args)
         {
-            var solution = new Day_18.Solution();
+            var solution = new Day_24.Solution();
 
             var watch = System.Diagnostics.Stopwatch.StartNew();
 
@@ -15,7 +15,7 @@ namespace Advent_of_Code_2021
             Console.WriteLine($"First part: { PartOne }");
             Console.WriteLine($"Second part: { PartTwo }");
 
-            Console.WriteLine($"\nTotal run time: { watch.ElapsedMilliseconds / 1000 } seconds.");
+            Console.WriteLine(String.Format("\nTotal run time: {0:0.00} seconds.", watch.ElapsedMilliseconds / 1000.0));
 
             Console.Read();
         }
